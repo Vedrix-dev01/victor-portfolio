@@ -42,6 +42,13 @@ export const projects = [
   },
   {
     tag: "MOBILE · APP STORE",
+    name: "VisionVerse",
+    desc: "Unified iOS app, formerly Dora Station, live on the App Store. Brings Dora Dungeons and Cozy Dora together under one sign-in and one subscription.",
+    stack: ["React 19", "Capacitor · FastAPI"],
+    href: "https://apps.apple.com/ng/app/visionverse/id6790102747",
+  },
+  {
+    tag: "MOBILE · APP STORE",
     name: "Due AI (NoSpoil)",
     desc: "Food expiry tracker live on the App Store. Scans expiry dates with the phone camera, alerts you before food spoils, suggests recipes for what is about to expire, and builds shopping lists.",
     stack: ["Cursor", "iOS · App Store"],
@@ -101,13 +108,6 @@ export const projects = [
     name: "KilnFire",
     desc: "TikTok-style platform for craft artists. App Store compliance across front & backend.",
     stack: ["React", "App Store"],
-    href: null,
-  },
-  {
-    tag: "MOBILE",
-    name: "Dora Station",
-    desc: "Unified mobile app on a locked React 19 + Capacitor + FastAPI architecture.",
-    stack: ["React 19", "Capacitor · FastAPI"],
     href: null,
   },
   {
