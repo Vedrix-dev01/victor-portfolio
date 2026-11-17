@@ -1,4 +1,5 @@
 import ContactForm from "./components/ContactForm";
+import { Effects, WorkList } from "./components/Effects";
 import { services, projects, FIVERR_URL, GITHUB_URL, EMAIL } from "@/lib/data";
 
 const MAILTO =
@@ -29,11 +30,21 @@ function host(href: string) {
 }
 
 const live = projects.filter((p) => p.href);
+const workItems = live.map((p) => ({
+  name: p.name,
+  kind: kind(p.tag),
+  group: kind(p.tag) === "Mobile" ? "Mobile apps" : "Web apps",
+  desc: plain(p.desc),
+  stack: p.stack.map(plain).join(", "),
+  href: p.href as string,
+  host: host(p.href as string),
+}));
 const other = projects.filter((p) => !p.href);
 
 export default function Home() {
   return (
     <>
+      <Effects />
       <nav className="nav">
         <div className="wrap nav-in">
           <a href="#top" className="brand">victor</a>
@@ -97,10 +108,10 @@ export default function Home() {
 
       <section id="services" className="sec sec-dark">
         <div className="wrap">
-          <h2 className="display">What I do</h2>
+          <h2 className="display" data-reveal>What I do</h2>
           <div className="svc">
             {services.map((s) => (
-              <div key={s.title} className="svc-item">
+              <div key={s.title} className="svc-item" data-reveal>
                 <h3>{s.title}</h3>
                 <p>{plain(s.body)}</p>
                 <div className="svc-tags">{s.tags.join(", ")}</div>
@@ -112,29 +123,15 @@ export default function Home() {
 
       <section id="work" className="sec sec-paper">
         <div className="wrap">
-          <h2 className="display">Shipped work</h2>
+          <h2 className="display" data-reveal>Shipped work</h2>
           <p className="sec-lede">Every project below is live. Open any of them and try it.</p>
-          <div className="work">
-            {live.map((p) => (
-              <a key={p.name} href={p.href as string} target="_blank" rel="noopener" className="work-row">
-                <div>
-                  <div className="work-name">{p.name}</div>
-                  <div className="work-kind">{kind(p.tag)}</div>
-                </div>
-                <div>
-                  <p className="work-desc">{plain(p.desc)}</p>
-                  <div className="work-stack">{p.stack.map(plain).join(", ")}</div>
-                </div>
-                <span className="work-host">{host(p.href as string)}</span>
-              </a>
-            ))}
-          </div>
+          <WorkList items={workItems} />
 
-          <h3 className="more-h">More client work</h3>
+          <h3 className="more-h" data-reveal>More client work</h3>
           <p className="sec-lede">Builds without a public link, including work still in progress.</p>
           <div className="more">
             {other.map((p) => (
-              <div key={p.name} className="more-item">
+              <div key={p.name} className="more-item" data-reveal>
                 <div className="more-top">
                   <span className="more-name">{p.name}</span>
                   {p.tag.includes("IN PROGRESS") && <span className="badge">In progress</span>}
@@ -148,7 +145,7 @@ export default function Home() {
 
       <section id="contact" className="sec sec-dark">
         <div className="wrap contact-grid">
-          <div>
+          <div data-reveal>
             <h2 className="display">Tell me where it is stuck</h2>
             <p className="sec-lede">
               Send the app link and what is breaking. I reply with a clear scope and a price.
@@ -168,7 +165,9 @@ export default function Home() {
               </a>
             </div>
           </div>
-          <ContactForm />
+          <div data-reveal>
+            <ContactForm />
+          </div>
         </div>
       </section>
 
