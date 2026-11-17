@@ -49,10 +49,10 @@ export default function ContactForm() {
 
   if (status === "sent") {
     return (
-      <div className="rounded-xl border border-line bg-[#16161c] p-8 text-center">
-        <div className="mb-2 font-mono text-acid">✓ Message sent</div>
+      <div className="rounded-xl border border-line bg-panel p-8 text-center">
+        <div className="mb-2 font-semibold text-acid">Message sent</div>
         <p className="text-muted">
-          Thanks — I&apos;ll get back to you shortly. For anything urgent, email{" "}
+          Thanks. I&apos;ll reply by email. For anything urgent, write to{" "}
           <a className="text-ink underline" href="mailto:victorv3925@gmail.com">
             victorv3925@gmail.com
           </a>
@@ -60,16 +60,16 @@ export default function ContactForm() {
         </p>
         <button
           onClick={() => setStatus("idle")}
-          className="mt-5 font-mono text-sm text-muted hover:text-ink"
+          className="mt-5 text-sm text-muted hover:text-ink"
         >
-          Send another →
+          Send another message
         </button>
       </div>
     );
   }
 
   const input =
-    "w-full rounded-lg border border-line bg-[#16161c] px-4 py-3 text-sm text-ink placeholder:text-muted focus:border-acid focus:outline-none transition-colors";
+    "w-full rounded-lg border border-line bg-panel px-4 py-3 text-[15px] text-ink placeholder:text-muted focus:border-acid focus:outline-none transition-colors";
 
   return (
     <div className="flex flex-col gap-3">
@@ -116,13 +116,13 @@ export default function ContactForm() {
         value={form.company}
         onChange={(e) => update("company", e.target.value)}
       />
-      {error && <p className="font-mono text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-red-300">{error}</p>}
       <button
         onClick={submit}
         disabled={status === "sending"}
-        className="mt-1 rounded-lg bg-acid px-6 py-3.5 font-mono text-sm font-bold text-bg transition-all hover:-translate-y-0.5 disabled:opacity-60 disabled:hover:translate-y-0"
+        className="mt-1 rounded-full bg-acid px-6 py-3.5 text-[15px] font-semibold text-bg transition-all hover:-translate-y-0.5 disabled:opacity-60 disabled:hover:translate-y-0"
       >
-        {status === "sending" ? "Sending…" : "Send message →"}
+        {status === "sending" ? "Sending…" : "Send message"}
       </button>
     </div>
   );
