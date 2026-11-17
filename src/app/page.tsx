@@ -179,7 +179,7 @@ export default function Home() {
                     GitHub<span className="text-muted">@Vedrixappsheet →</span>
                   </a>
                   <a href="https://wa.me/2348123421589" target="_blank" rel="noopener" className="flex items-center justify-between rounded-lg border border-line bg-[#16161c] px-5 py-4 font-mono text-sm transition-all hover:translate-x-1 hover:border-acid">
-                    WhatsApp<span className="text-muted">+234 812 342 1589 →</span>
+                    WhatsApp<span className="text-muted">chat with me →</span>
                   </a>
                 </div>
               </div>
