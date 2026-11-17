@@ -459,3 +459,231 @@ a.work-row:hover .work-name {
     transition: none;
   }
 }
+
+/* motion and interaction */
+.progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  height: 3px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+.nav-links a {
+  position: relative;
+  padding: 6px 0;
+  transition: color 0.15s;
+}
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 2px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.25s ease;
+}
+.nav-links a.on {
+  color: var(--ink);
+}
+.nav-links a.on::after,
+.nav-links a:hover::after {
+  transform: scaleX(1);
+}
+
+.btn {
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+.btn:hover {
+  transform: translateY(-2px);
+}
+.btn:active {
+  transform: translateY(0) scale(0.98);
+}
+.btn-gold:hover {
+  box-shadow: 0 10px 26px rgba(201, 169, 97, 0.28);
+}
+
+.hero {
+  position: relative;
+  --mx: 70%;
+  --my: 30%;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(520px circle at var(--mx) var(--my), rgba(201, 169, 97, 0.13), transparent 70%);
+}
+.hero .wrap {
+  position: relative;
+}
+.hero h1 .block {
+  animation: rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.hero h1 .block:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.hero-sub,
+.hero-cta,
+.hero-tools {
+  animation: rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.hero-sub {
+  animation-delay: 0.24s;
+}
+.hero-cta {
+  animation-delay: 0.34s;
+}
+.hero-tools {
+  animation-delay: 0.44s;
+}
+.board {
+  animation: rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s both;
+}
+.board-row .board-name {
+  transition: transform 0.2s ease;
+}
+.board-row:hover .board-name {
+  transform: translateX(4px);
+}
+.dot {
+  position: relative;
+  box-shadow: none;
+}
+.dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--live);
+  animation: ping 2.2s ease-out infinite;
+}
+@keyframes ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  70%,
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+[data-reveal].in {
+  opacity: 1;
+  transform: none;
+}
+
+.svc-item {
+  position: relative;
+}
+.svc-item::before {
+  content: "";
+  position: absolute;
+  inset: -1px 0 auto 0;
+  height: 2px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.35s ease;
+}
+.svc-item:hover::before {
+  transform: scaleX(1);
+}
+.svc-item h3 {
+  transition: color 0.2s;
+}
+.svc-item:hover h3 {
+  color: var(--gold);
+}
+
+.chips {
+  margin-top: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.chip {
+  border: 1px solid #c3c9d6;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy-ink);
+  background: transparent;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.chip span {
+  margin-left: 4px;
+  font-weight: 400;
+  color: var(--slate);
+}
+.chip:hover {
+  border-color: var(--navy-ink);
+}
+.chip-on,
+.chip-on:hover {
+  background: var(--navy-ink);
+  border-color: var(--navy-ink);
+  color: var(--paper);
+}
+.chip-on span {
+  color: #b9c2d6;
+}
+.chips + .work {
+  margin-top: 28px;
+}
+.work-in {
+  animation: rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.work-row {
+  transition: background 0.2s, padding 0.2s;
+}
+a.work-row:hover {
+  background: #eaedf3;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+.more-item {
+  transition: padding 0.2s;
+}
+.more-item:hover {
+  padding-left: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero h1 .block,
+  .hero-sub,
+  .hero-cta,
+  .hero-tools,
+  .board,
+  .work-in,
+  .dot::after {
+    animation: none;
+  }
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .btn:hover,
+  .board-row:hover .board-name {
+    transform: none;
+  }
+  .work-row,
+  .more-item,
+  .svc-item::before,
+  .nav-links a::after {
+    transition: none;
+  }
+}
