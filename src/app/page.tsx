@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Reveal from "./components/Reveal";
 import ContactForm from "./components/ContactForm";
 import { services, projects, FIVERR_URL, GITHUB_URL, EMAIL } from "@/lib/data";
@@ -45,16 +44,6 @@ export default function Home() {
               that actually launch.
             </h1>
             <div className="flex shrink-0 flex-col items-center gap-4">
-              <div className="rounded-full bg-gradient-to-b from-[#1c1c24] to-bg p-1 shadow-[0_10px_30px_rgba(0,0,0,0.55)]">
-                <Image
-                  src="/victor.jpg"
-                  alt="Victor — full-stack & AI app developer"
-                  width={130}
-                  height={130}
-                  priority
-                  className="h-[130px] w-[130px] rounded-full border-2 border-acid object-cover"
-                />
-              </div>
               <p className="max-w-[280px] text-center text-[13px] leading-relaxed text-muted">
                 I&apos;m Victor, a full-stack and AI app developer based in Lagos. I take products
                 from prototype to production — App Store submissions, EU-compliant migrations, Stripe
