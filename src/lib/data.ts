@@ -41,6 +41,13 @@ export const projects = [
     href: "https://atlantispropertysolution.com/",
   },
   {
+    tag: "FAITH · LIVE",
+    name: "Upper Room Learning",
+    desc: "Bible devotion site built around daily time in the Word, helping people grow their relationship with God, themselves and others. Includes Meta Pixel tracking for campaigns.",
+    stack: ["Web app", "Meta Pixel"],
+    href: "https://upperroomlearning.com/romans122",
+  },
+  {
     tag: "MOBILE · APP STORE",
     name: "Dora Dungeons",
     desc: "AI-powered text-and-audio dungeon RPG live on the App Store — dynamic AI game master, voice narration, procedurally generated runs, and subscription in-app purchases.",
