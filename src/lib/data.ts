@@ -34,6 +34,13 @@ export const projects = [
     href: "https://rantpassport.com/",
   },
   {
+    tag: "RESTORATION · LIVE",
+    name: "Atlantis Property Solutions",
+    desc: "Website for a property restoration and repair company that coordinates a nationwide contractor network, with service pages, a request-service flow and a section for insurance carriers.",
+    stack: ["WordPress", "Elementor"],
+    href: "https://atlantispropertysolution.com/",
+  },
+  {
     tag: "MOBILE · APP STORE",
     name: "Dora Dungeons",
     desc: "AI-powered text-and-audio dungeon RPG live on the App Store — dynamic AI game master, voice narration, procedurally generated runs, and subscription in-app purchases.",
