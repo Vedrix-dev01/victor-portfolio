@@ -48,6 +48,13 @@ export const projects = [
     href: "https://upperroomlearning.com/romans122",
   },
   {
+    tag: "LOCAL BUSINESS · LIVE",
+    name: "Epoxy Flooring Near Me",
+    desc: "Marketing website for an epoxy flooring company serving Kansas and Missouri, with services, a project gallery, quote requests, a contact form and newsletter signup.",
+    stack: ["Hostinger Website Builder"],
+    href: "https://epoxyflooringnear.me/",
+  },
+  {
     tag: "MOBILE · APP STORE",
     name: "Dora Dungeons",
     desc: "AI-powered text-and-audio dungeon RPG live on the App Store — dynamic AI game master, voice narration, procedurally generated runs, and subscription in-app purchases.",
