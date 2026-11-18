@@ -55,6 +55,13 @@ export const projects = [
     href: "https://epoxyflooringnear.me/",
   },
   {
+    tag: "EDUCATION · LIVE",
+    name: "StudyBot",
+    desc: "AI study tool for secondary school pupils in the Netherlands. Generates flashcards, quizzes and notes, with a Dutch-language interface designed for Dutch schools.",
+    stack: ["AI", "Vercel"],
+    href: "https://studybot-ivory.vercel.app/",
+  },
+  {
     tag: "MOBILE · APP STORE",
     name: "Dora Dungeons",
     desc: "AI-powered text-and-audio dungeon RPG live on the App Store — dynamic AI game master, voice narration, procedurally generated runs, and subscription in-app purchases.",
