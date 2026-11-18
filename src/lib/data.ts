@@ -69,6 +69,13 @@ export const projects = [
     href: "https://28thgate.com/",
   },
   {
+    tag: "MARKETING · LIVE",
+    name: "Campaign Orchestrator",
+    desc: "All-in-one tool for planning, running and tracking marketing campaigns: campaign timelines, task lists, an activity log, marketing reports and a built-in AI assistant, behind a team login.",
+    stack: ["Base44", "AI assistant"],
+    href: "https://campaign-orchestrator-e9f2293b.base44.app/",
+  },
+  {
     tag: "MOBILE · APP STORE",
     name: "Dora Dungeons",
     desc: "AI-powered text-and-audio dungeon RPG live on the App Store — dynamic AI game master, voice narration, procedurally generated runs, and subscription in-app purchases.",
