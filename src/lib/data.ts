@@ -62,6 +62,13 @@ export const projects = [
     href: "https://studybot-ivory.vercel.app/",
   },
   {
+    tag: "TRADING · LIVE",
+    name: "28th Gate",
+    desc: "Website and member platform for a gold trading community: Telegram signal onboarding, a trade journal with a read-only MT5 connection, a track record page, economic calendar and partner program.",
+    stack: ["Base44", "Telegram · MT5"],
+    href: "https://28thgate.com/",
+  },
+  {
     tag: "MOBILE · APP STORE",
     name: "Dora Dungeons",
     desc: "AI-powered text-and-audio dungeon RPG live on the App Store — dynamic AI game master, voice narration, procedurally generated runs, and subscription in-app purchases.",
