@@ -34,6 +34,8 @@ export function Effects() {
       el.style.setProperty("--ry", "0deg");
     };
     const onMove = (e: PointerEvent) => {
+      // Fingers never drive the tilt: a touch has no "leave", so it would stick.
+      if (e.pointerType !== "mouse") return;
       const el = (e.target as Element | null)?.closest<HTMLElement>("[data-tilt]") ?? null;
       if (active && active !== el) reset(active);
       active = el;
@@ -58,10 +60,40 @@ export function Effects() {
     };
     if (canTilt) document.addEventListener("pointermove", onMove, { passive: true });
 
+    // Touch screens get depth from scrolling instead: each frame leans a few
+    // degrees as it enters and leaves the screen, and sits flat at the centre.
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const scrollTilt = !canTilt && !reduced;
+    let frame = 0;
+    const lean = () => {
+      frame = 0;
+      const vh = window.innerHeight;
+      const pos = (r: DOMRect) =>
+        Math.max(-1, Math.min(1, (r.top + r.height / 2 - vh / 2) / (vh / 2)));
+      document.querySelectorAll<HTMLElement>("[data-tilt]").forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.bottom < -80 || r.top > vh + 80) return;
+        el.style.setProperty("--rx", `${(pos(r) * 7).toFixed(2)}deg`);
+      });
+      if (stage) stage.style.setProperty("--py", pos(stage.getBoundingClientRect()).toFixed(3));
+    };
+    const onScrollTilt = () => {
+      if (!frame) frame = requestAnimationFrame(lean);
+    };
+    if (scrollTilt) {
+      document.documentElement.classList.add("scroll-tilt");
+      lean();
+      window.addEventListener("scroll", onScrollTilt, { passive: true });
+      window.addEventListener("resize", onScrollTilt);
+    }
+
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       document.removeEventListener("pointermove", onMove);
+      window.removeEventListener("scroll", onScrollTilt);
+      window.removeEventListener("resize", onScrollTilt);
+      if (frame) cancelAnimationFrame(frame);
     };
   }, []);
 
