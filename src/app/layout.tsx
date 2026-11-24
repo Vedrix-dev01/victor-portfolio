@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/archivo/wdth.css";
 import "./globals.css";
 
@@ -12,6 +12,13 @@ export const metadata: Metadata = {
       "I ship web & mobile apps that actually launch. App Store, EU/GDPR migrations, AI agents & automation.",
     type: "website",
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#f2f4ef",
 };
 
 export default function RootLayout({

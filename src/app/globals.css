@@ -607,3 +607,132 @@ textarea:focus-visible {
     transition: none;
   }
 }
+
+/* phones and small tablets */
+.hero h1,
+.sec h2 {
+  text-wrap: balance;
+}
+.work {
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 820px) {
+  .work {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.card {
+  min-width: 0;
+}
+.card-open {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.chip {
+  min-height: 44px;
+}
+.dock {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .wrap {
+    padding: 0 20px;
+  }
+  /* Section links replace the Fiverr button, which moves to the contact bar. */
+  .nav-links {
+    display: flex;
+    gap: 22px;
+  }
+  .nav-links a {
+    padding: 12px 0;
+  }
+  .nav-cta {
+    display: none;
+  }
+  .hero {
+    padding: 36px 0 48px;
+  }
+  .hero-row {
+    margin-top: 20px;
+    gap: 20px;
+  }
+  .hero-cta .btn {
+    flex: 1 1 0;
+    padding: 14px 12px;
+    white-space: nowrap;
+  }
+  .stage {
+    margin-top: 32px;
+  }
+  .stage-phone {
+    right: -6px;
+    bottom: -22px;
+    width: 23%;
+  }
+  .stage-note {
+    margin-top: 40px;
+  }
+  .sec {
+    padding: 56px 0;
+  }
+  .work {
+    margin-top: 28px;
+    gap: 44px;
+  }
+  .card-text {
+    margin-top: 16px;
+  }
+  .more-h {
+    margin-top: 64px;
+  }
+  .svc {
+    margin-top: 28px;
+  }
+  .svc-item {
+    padding: 24px 0;
+  }
+  .contact-grid {
+    gap: 36px;
+  }
+  .way {
+    padding: 16px 0;
+    min-height: 48px;
+  }
+  /* 16px stops iOS zooming the page when a field is focused. */
+  .sec-pine input,
+  .sec-pine textarea {
+    font-size: 16px;
+  }
+
+  .dock {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 40;
+    display: flex;
+    gap: 10px;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    background: rgba(242, 244, 239, 0.94);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--mist);
+    transform: translateY(110%);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .dock.dock-on {
+    transform: none;
+  }
+  .dock .btn {
+    flex: 1 1 0;
+    padding: 12px 8px;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+  .foot {
+    padding-bottom: calc(28px + env(safe-area-inset-bottom));
+  }
+}
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  .dock {
+    transition: none;
+  }
+}
