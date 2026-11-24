@@ -84,8 +84,8 @@ export const projects = [
   },
   {
     tag: "AI · LIVE",
-    name: "Eventure AI",
-    desc: "AI-powered event planning app, built and deployed on Replit.",
+    name: "Madnetic Live",
+    desc: "AI-powered event marketing platform that tells organisers what to do, when, and how much to spend to sell out their events. Built and deployed on Replit.",
     stack: ["Replit", "AI"],
     href: "https://eventure-ai--madisonleescott.replit.app",
   },
