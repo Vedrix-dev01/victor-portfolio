@@ -99,19 +99,10 @@ export default function Home() {
             <span className="block">and I get them live.</span>
           </h1>
           <p className="hero-sub">
-            I&apos;m Victor, a full-stack developer. I build web apps, mobile apps and websites
-            from scratch, and AI agents that handle client support, lead intake and payment
-            follow-up. I also take over apps started in Lovable, Base44, Replit, Bolt, Emergent
-            or Cursor, fix them, and take them through launch.
+            I&apos;m Victor, a full-stack developer. I build web apps, mobile apps, websites and
+            AI agents from scratch. I also take over apps started in Lovable, Base44, Replit,
+            Bolt, Emergent or Cursor and get them launched.
           </p>
-          <ul className="jobs">
-            {jobs.map((j) => (
-              <li key={j.title}>
-                <strong>{j.title}</strong>
-                <span>{j.body}</span>
-              </li>
-            ))}
-          </ul>
           <div className="hero-cta">
             <a href="#work" className="btn btn-ink">
               See shipped work
@@ -150,7 +141,15 @@ export default function Home() {
               </a>
             )}
           </div>
-          <p className="stage-note">
+<ul className="jobs">
+            {jobs.map((j) => (
+              <li key={j.title}>
+                <strong>{j.title}</strong>
+                <span>{j.body}</span>
+              </li>
+            ))}
+          </ul>
+                    <p className="stage-note">
             {live.length} apps live right now, including {heroWeb?.name}
             {heroPhone?.shot?.kind === "phone" ? ` and ${heroPhone.name}` : ""}. Every one is
             below with its link.
