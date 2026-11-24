@@ -3,13 +3,13 @@ import "@fontsource-variable/archivo/wdth.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "victor, full-stack and AI app developer",
+  title: "victor, full-stack developer for apps, websites and AI agents",
   description:
-    "Full-stack developer. Web apps, mobile apps and websites built from scratch, and AI-built apps fixed and launched: App Store submissions, Stripe billing, migrations and AI automation.",
+    "Full-stack developer. Web apps, mobile apps, websites and AI agents built from scratch, and AI-built apps fixed and launched: App Store submissions, Stripe billing and migrations.",
   openGraph: {
-    title: "victor, full-stack and AI app developer",
+    title: "victor, full-stack developer for apps, websites and AI agents",
     description:
-      "I build web apps, mobile apps and websites, and get them live. App Store, Stripe billing, migrations, AI agents and automation.",
+      "I build web apps, mobile apps, websites and AI agents, and get them live. App Store, Stripe billing, migrations and automation.",
     type: "website",
   },
 };

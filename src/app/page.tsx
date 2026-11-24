@@ -67,7 +67,7 @@ const jobs = [
   { title: "Build", body: "Web apps, mobile apps and websites from scratch, front end and backend." },
   { title: "Fix and finish", body: "Take over AI-built or half-done apps: bugs, sign-in, payments, database security." },
   { title: "Launch", body: "Domain, hosting you own, and App Store and Google Play submission through review." },
-  { title: "Automate", body: "AI agents, integrations and automations that take real work off your team." },
+  { title: "AI agents", body: "Agents that answer clients, qualify leads and follow up on failed payments, wired into your existing tools." },
 ];
 const heroWeb =
   workItems.find((p) => p.shot?.kind === "web") ?? workItems.find((p) => p.shot?.kind !== "phone");
@@ -94,14 +94,15 @@ export default function Home() {
       <header id="top" className="hero">
         <div className="wrap">
           <h1 className="display">
-            <span className="block">I build apps and websites,</span>
+            <span className="block">I build apps, websites and AI agents,</span>
             <span className="block">and I get them live.</span>
           </h1>
           <p className="hero-sub">
             I&apos;m Victor, a full-stack developer. I design and build web apps, mobile apps and
-            websites from scratch, with the backend, sign-in and payments behind them. I also
-            take over apps started in Lovable, Base44, Replit, Bolt, Emergent or Cursor, fix
-            them, and carry them through launch on the web, the App Store and Google Play.
+            websites from scratch, with the backend, sign-in and payments behind them. I build AI
+            agents that handle client support, lead intake and payment follow-up inside the tools
+            a business already uses. I also take over apps started in Lovable, Base44, Replit,
+            Bolt, Emergent or Cursor, fix them, and carry them through launch.
           </p>
           <ul className="jobs">
             {jobs.map((j) => (
