@@ -752,3 +752,64 @@ textarea:focus-visible {
     margin-top: 24px;
   }
 }
+
+/* phone pass 2 */
+section[id],
+header[id] {
+  scroll-margin-top: 72px;
+}
+.badge {
+  font-size: 13px;
+}
+.card-open {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+@media (min-width: 700px) and (max-width: 819px) {
+  .work {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 48px 28px;
+  }
+}
+@media (min-width: 768px) {
+  .nav-links a {
+    padding: 12px 0;
+  }
+}
+@media (max-width: 767px) {
+  /* Headline sized so each phrase holds a line on common phone widths. */
+  .hero h1 {
+    font-size: clamp(24px, 7.1vw, 34px);
+    line-height: 1.04;
+    text-wrap: wrap;
+  }
+  .hero-sub {
+    font-size: 16.5px;
+  }
+}
+@media (max-width: 520px) {
+  /* One job per row: label on the left, what it covers on the right. */
+  .jobs {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding-top: 0;
+  }
+  .jobs li {
+    display: grid;
+    grid-template-columns: 6.6rem minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--mist);
+  }
+  .jobs strong {
+    font-size: 16px;
+    line-height: 1.3;
+  }
+  .jobs span {
+    margin-top: 0;
+    font-size: 14.5px;
+  }
+}
