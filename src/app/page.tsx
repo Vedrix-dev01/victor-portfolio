@@ -94,9 +94,9 @@ export default function Home() {
       <header id="top" className="hero">
         <div className="wrap">
           <h1 className="display">
-            <span className="block">I build apps, websites</span>
-            <span className="block">and AI agents,</span>
-            <span className="block">and I get them live.</span>
+            I build and ship
+            <br /> apps, websites
+            <br /> and AI agents.
           </h1>
           <p className="hero-sub">
             I&apos;m Victor, a full-stack developer. I build web apps, mobile apps, websites and

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "victor, full-stack developer for apps, websites and AI agents",
     description:
-      "I build web apps, mobile apps, websites and AI agents, and get them live. App Store, Stripe billing, migrations and automation.",
+      "I build and ship web apps, mobile apps, websites and AI agents. App Store, Stripe billing, migrations and automation.",
     type: "website",
   },
 };
