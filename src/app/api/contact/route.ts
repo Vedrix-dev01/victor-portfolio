@@ -37,7 +37,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Please add a short message." }, { status: 400 });
   }
 
-  // Save first so a lead is never lost even if email fails.
+  // Save and email independently, so one failing never loses the lead.
+  let saved = false;
   try {
     const supabase = getSupabaseAdmin();
     const { error } = await supabase.from("submissions").insert({
@@ -47,23 +48,20 @@ export async function POST(request: Request) {
       stack: stack || null,
       message,
     });
-    if (error) {
-      console.error("Supabase insert error:", error);
-      return NextResponse.json(
-        { error: "Could not save your message. Please email me directly." },
-        { status: 500 }
-      );
-    }
+    if (error) console.error("Supabase insert error:", error);
+    saved = !error;
   } catch (err) {
     console.error("Save failed:", err);
+  }
+
+  const emailed = await sendNotification({ name, email, project, stack, message });
+
+  if (!saved && !emailed) {
     return NextResponse.json(
-      { error: "Server not configured. Please email me directly." },
+      { error: "Your message could not be sent from this form." },
       { status: 500 }
     );
   }
-
-  // Email is best-effort; don't fail the request if it doesn't send.
-  await sendNotification({ name, email, project, stack, message });
 
   return NextResponse.json({ ok: true });
 }

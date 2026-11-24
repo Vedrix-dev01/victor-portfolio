@@ -36,14 +36,14 @@ export default function ContactForm() {
       const data = await res.json();
       if (!res.ok) {
         setStatus("error");
-        setError(data.error || "Something went wrong.");
+        setError(data.error || "Your message could not be sent from this form.");
         return;
       }
       setStatus("sent");
       setForm({ name: "", email: "", project: "", stack: "", message: "", company: "" });
     } catch {
       setStatus("error");
-      setError("Network error. Please email me directly.");
+      setError("Network error. Your message was not sent.");
     }
   }
 
@@ -117,6 +117,26 @@ export default function ContactForm() {
         onChange={(e) => update("company", e.target.value)}
       />
       {error && <p className="text-sm text-red-300">{error}</p>}
+      {status === "error" && (
+        <a
+          className="text-[15px] font-semibold text-acid underline"
+          href={`mailto:victorv3925@gmail.com?subject=${encodeURIComponent(
+            "New project inquiry"
+          )}&body=${encodeURIComponent(
+            [
+              form.message,
+              "",
+              form.project && `Project: ${form.project}`,
+              form.stack && `Platform: ${form.stack}`,
+              `From: ${form.name} (${form.email})`,
+            ]
+              .filter((l) => typeof l === "string")
+              .join("\n")
+          )}`}
+        >
+          Send it by email instead (your message is filled in)
+        </a>
+      )}
       <button
         onClick={submit}
         disabled={status === "sending"}
