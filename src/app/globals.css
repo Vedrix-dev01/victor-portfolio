@@ -885,9 +885,20 @@ header[id] {
   }
 }
 /* Scroll-driven lean on touch screens follows the finger with no lag. */
-.scroll-tilt [data-tilt] {
-  transition: scale 0.15s;
+.scroll-tilt [data-tilt],
+.scroll-tilt [data-tilt].tilting {
+  transition: scale 0.15s, transform 0.14s linear, box-shadow 0.3s;
   will-change: transform;
+}
+/* Rise into place on first view (touch screens). */
+.rv {
+  opacity: 0;
+  transform: translateY(22px);
+}
+.rv.rv-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .scroll-tilt .stage-phone {
   transition: none;
