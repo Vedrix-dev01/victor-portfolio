@@ -78,7 +78,7 @@ export default function Home() {
             <a href="#services">Services</a>
             <a href="#contact">Contact</a>
           </div>
-          <a href={FIVERR_URL} target="_blank" rel="noopener" className="btn btn-ink btn-sm">
+          <a href={FIVERR_URL} target="_blank" rel="noopener" className="btn btn-ink btn-sm nav-cta">
             Hire me on Fiverr
           </a>
         </div>
@@ -207,6 +207,15 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <div className="dock" aria-label="Contact">
+        <a href={WHATSAPP_URL} target="_blank" rel="noopener" className="btn btn-line">
+          Chat on WhatsApp
+        </a>
+        <a href={FIVERR_URL} target="_blank" rel="noopener" className="btn btn-ink">
+          Hire me on Fiverr
+        </a>
+      </div>
 
       <footer className="foot">
         <div className="wrap">© 2026 victor</div>

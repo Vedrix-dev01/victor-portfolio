@@ -21,6 +21,20 @@ export function Effects() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+    // Phone contact bar: shown once the hero buttons scroll away, hidden again
+    // at the contact section, which has its own ways to get in touch.
+    const dock = document.querySelector<HTMLElement>(".dock");
+    const cta = document.querySelector<HTMLElement>(".hero-cta");
+    const contact = document.querySelector<HTMLElement>("#contact");
+    const seen = new Map<Element, boolean>();
+    const dockObs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => seen.set(e.target, e.isIntersecting));
+      const pastHero = cta ? cta.getBoundingClientRect().bottom < 0 : false;
+      dock?.classList.toggle("dock-on", pastHero && !seen.get(contact as Element));
+    });
+    if (cta) dockObs.observe(cta);
+    if (contact) dockObs.observe(contact);
+
     // 3D tilt: frames lean toward the pointer and a soft highlight follows it.
     // Mouse only, and off when the visitor prefers reduced motion.
     const canTilt =
@@ -62,6 +76,7 @@ export function Effects() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       document.removeEventListener("pointermove", onMove);
+      dockObs.disconnect();
     };
   }, []);
 
