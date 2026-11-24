@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-type Status = "idle" | "sending" | "sent" | "error";
+type Status = "idle" | "sending" | "sent" | "handoff";
 
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
@@ -33,18 +33,68 @@ export default function ContactForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      const data = await res.json();
       if (!res.ok) {
-        setStatus("error");
-        setError(data.error || "Your message could not be sent from this form.");
+        const data = await res.json().catch(() => ({}));
+        // A fixable problem with what was typed stays on the form.
+        if (res.status === 400) {
+          setStatus("idle");
+          setError(data.error || "Please check the form and try again.");
+          return;
+        }
+        // Anything else: hand the message over to email or WhatsApp, filled in.
+        setStatus("handoff");
         return;
       }
       setStatus("sent");
       setForm({ name: "", email: "", project: "", stack: "", message: "", company: "" });
     } catch {
-      setStatus("error");
-      setError("Network error. Your message was not sent.");
+      setStatus("handoff");
     }
+  }
+
+  if (status === "handoff") {
+    const text = [
+      form.message,
+      "",
+      form.project && `Project: ${form.project}`,
+      form.stack && `Platform: ${form.stack}`,
+      `From: ${form.name} (${form.email})`,
+    ]
+      .filter((l) => typeof l === "string")
+      .join("\n");
+    const mail = `mailto:victorv3925@gmail.com?subject=${encodeURIComponent(
+      "New project inquiry"
+    )}&body=${encodeURIComponent(text)}`;
+    const whatsapp = `https://wa.me/2348123421589?text=${encodeURIComponent(text)}`;
+    const choice =
+      "flex items-center justify-center rounded-[10px] px-6 py-3.5 text-[15px] font-semibold transition-colors";
+    return (
+      <div className="rounded-xl border border-line bg-panel p-7">
+        <div className="mb-2 text-lg font-semibold text-ink">One more step to send it</div>
+        <p className="mb-5 text-muted">
+          Your message is ready. Choose how to send it and it opens already filled in.
+        </p>
+        <div className="flex flex-col gap-3">
+          <a href={mail} className={`${choice} bg-acid text-bg`}>
+            Send by email
+          </a>
+          <a
+            href={whatsapp}
+            target="_blank"
+            rel="noopener"
+            className={`${choice} border border-line text-ink hover:border-acid`}
+          >
+            Send on WhatsApp
+          </a>
+        </div>
+        <button
+          onClick={() => setStatus("idle")}
+          className="mt-5 text-sm text-muted hover:text-ink"
+        >
+          Back to the form
+        </button>
+      </div>
+    );
   }
 
   if (status === "sent") {
@@ -117,26 +167,6 @@ export default function ContactForm() {
         onChange={(e) => update("company", e.target.value)}
       />
       {error && <p className="text-sm text-red-300">{error}</p>}
-      {status === "error" && (
-        <a
-          className="text-[15px] font-semibold text-acid underline"
-          href={`mailto:victorv3925@gmail.com?subject=${encodeURIComponent(
-            "New project inquiry"
-          )}&body=${encodeURIComponent(
-            [
-              form.message,
-              "",
-              form.project && `Project: ${form.project}`,
-              form.stack && `Platform: ${form.stack}`,
-              `From: ${form.name} (${form.email})`,
-            ]
-              .filter((l) => typeof l === "string")
-              .join("\n")
-          )}`}
-        >
-          Send it by email instead (your message is filled in)
-        </a>
-      )}
       <button
         onClick={submit}
         disabled={status === "sending"}
