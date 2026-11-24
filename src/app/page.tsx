@@ -94,7 +94,8 @@ export default function Home() {
       <header id="top" className="hero">
         <div className="wrap">
           <h1 className="display">
-            <span className="block">I build apps, websites and AI agents,</span>
+            <span className="block">I build apps, websites</span>
+            <span className="block">and AI agents,</span>
             <span className="block">and I get them live.</span>
           </h1>
           <p className="hero-sub">
