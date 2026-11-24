@@ -1,18 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Frame, type Shot } from "./Frame";
 
 export function Effects() {
   useEffect(() => {
-    const bar = document.querySelector<HTMLElement>(".progress");
     const links = Array.from(document.querySelectorAll<HTMLAnchorElement>(".nav-links a"));
     const sections = links
       .map((a) => document.querySelector<HTMLElement>(a.getAttribute("href") || "#none"))
       .filter((s): s is HTMLElement => Boolean(s));
 
     const onScroll = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      if (bar) bar.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
       const y = window.scrollY + window.innerHeight * 0.35;
       let current = "";
       sections.forEach((s) => {
@@ -23,38 +21,13 @@ export function Effects() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
-
-    const hero = document.querySelector<HTMLElement>(".hero");
-    const onMove = (e: PointerEvent) => {
-      if (!hero) return;
-      const r = hero.getBoundingClientRect();
-      hero.style.setProperty("--mx", `${e.clientX - r.left}px`);
-      hero.style.setProperty("--my", `${e.clientY - r.top}px`);
-    };
-    hero?.addEventListener("pointermove", onMove);
-
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("in");
-            obs.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
-    );
-    document.querySelectorAll("[data-reveal]").forEach((el) => obs.observe(el));
-
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
-      hero?.removeEventListener("pointermove", onMove);
-      obs.disconnect();
     };
   }, []);
 
-  return <div className="progress" aria-hidden="true" />;
+  return null;
 }
 
 export type WorkItem = {
@@ -65,6 +38,8 @@ export type WorkItem = {
   stack: string;
   href: string;
   host: string;
+  shot: Shot;
+  tint: number;
 };
 
 export function WorkList({ items }: { items: WorkItem[] }) {
@@ -91,24 +66,18 @@ export function WorkList({ items }: { items: WorkItem[] }) {
         })}
       </div>
       <div className="work">
-        {shown.map((p, i) => (
-          <a
-            key={`${filter}-${p.name}`}
-            href={p.href}
-            target="_blank"
-            rel="noopener"
-            className="work-row work-in"
-            style={{ animationDelay: `${i * 0.04}s` }}
-          >
-            <div>
-              <div className="work-name">{p.name}</div>
-              <div className="work-kind">{p.kind}</div>
+        {shown.map((p) => (
+          <a key={p.name} href={p.href} target="_blank" rel="noopener" className="card">
+            <Frame name={p.name} host={p.host} shot={p.shot} tint={p.tint} />
+            <div className="card-text">
+              <div className="card-top">
+                <h3 className="card-name">{p.name}</h3>
+                <span className="card-kind">{p.kind}</span>
+              </div>
+              <p className="card-desc">{p.desc}</p>
+              <p className="card-stack">{p.stack}</p>
+              <span className="card-open">Open {p.host}</span>
             </div>
-            <div>
-              <p className="work-desc">{p.desc}</p>
-              <div className="work-stack">{p.stack}</div>
-            </div>
-            <span className="work-host">{p.host}</span>
           </a>
         ))}
       </div>

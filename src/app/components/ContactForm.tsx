@@ -120,7 +120,7 @@ export default function ContactForm() {
       <button
         onClick={submit}
         disabled={status === "sending"}
-        className="mt-1 rounded-full bg-acid px-6 py-3.5 text-[15px] font-semibold text-bg transition-all hover:-translate-y-0.5 disabled:opacity-60 disabled:hover:translate-y-0"
+        className="mt-1 rounded-[10px] bg-acid px-6 py-3.5 text-[15px] font-semibold text-bg transition-all hover:-translate-y-0.5 disabled:opacity-60 disabled:hover:translate-y-0"
       >
         {status === "sending" ? "Sending…" : "Send message"}
       </button>
