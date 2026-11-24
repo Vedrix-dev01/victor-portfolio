@@ -2,6 +2,8 @@ import type { Config } from "tailwindcss";
 
 // These tokens style the contact form, which sits on the dark pine section.
 const config: Config = {
+  // Hover styles only where a real pointer can hover, so they never stick after a tap.
+  future: { hoverOnlyWhenSupported: true },
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {

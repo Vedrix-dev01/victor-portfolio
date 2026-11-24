@@ -836,3 +836,79 @@ header[id] {
     margin-top: 22px;
   }
 }
+
+/* touch interaction */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+/* A press gives feedback on any device. */
+.btn:active,
+.chip:active {
+  scale: 0.97;
+}
+.card:active .browser,
+.card:active .stagebox {
+  scale: 0.985;
+}
+.way:active,
+.nav-links a:active {
+  opacity: 0.65;
+}
+.btn,
+.chip,
+.card .browser,
+.card .stagebox {
+  transition-property: background, color, border-color, scale, transform, box-shadow;
+  transition-duration: 0.15s;
+}
+/* Hover looks belong to mice. On touch they would stay on after a tap. */
+@media (hover: none) {
+  .btn-ink:hover {
+    background: var(--ink);
+  }
+  .btn-line:hover {
+    background: transparent;
+    color: var(--ink);
+  }
+  .chip:not(.chip-on):hover {
+    border-color: var(--mist);
+  }
+  .nav-links a:not(.on):hover {
+    color: var(--slate);
+    border-bottom-color: transparent;
+  }
+  .card:hover .card-open {
+    color: inherit;
+  }
+  .way:hover {
+    color: inherit;
+  }
+}
+/* Scroll-driven lean on touch screens follows the finger with no lag. */
+.scroll-tilt [data-tilt],
+.scroll-tilt [data-tilt].tilting {
+  transition: scale 0.15s, transform 0.14s linear, box-shadow 0.3s;
+  will-change: transform;
+}
+/* Rise into place on first view (touch screens). */
+.rv {
+  opacity: 0;
+  transform: translateY(22px);
+}
+.rv.rv-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.scroll-tilt .stage-phone {
+  transition: none;
+  translate: 0 calc(var(--py) * -18px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn:active,
+  .chip:active,
+  .card:active .browser,
+  .card:active .stagebox {
+    scale: none;
+  }
+}
