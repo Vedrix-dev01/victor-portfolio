@@ -310,6 +310,48 @@ textarea:focus-visible {
   font-weight: 550;
 }
 
+/* 3D tilt: frames lean toward the pointer, with a highlight that follows it */
+[data-tilt] {
+  --rx: 0deg;
+  --ry: 0deg;
+  --gx: 50%;
+  --gy: 50%;
+  transform: perspective(1100px) rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s;
+}
+[data-tilt].tilting {
+  transition: transform 0.1s linear, box-shadow 0.3s;
+  box-shadow: 0 1px 0 var(--mist), 0 36px 60px -30px rgba(15, 31, 24, 0.5);
+}
+[data-tilt]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  background: radial-gradient(
+    circle at var(--gx) var(--gy),
+    rgba(255, 255, 255, 0.28),
+    transparent 55%
+  );
+}
+[data-tilt].tilting::after {
+  opacity: 1;
+}
+.browser {
+  position: relative;
+}
+.stage {
+  --px: 0;
+  --py: 0;
+}
+.stage-phone {
+  translate: calc(var(--px) * -22px) calc(var(--py) * -14px);
+  transition: translate 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 /* sections */
 .sec {
   padding: 88px 0;
@@ -379,14 +421,6 @@ textarea:focus-visible {
 }
 .card {
   display: block;
-}
-.card .browser,
-.card .stagebox {
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.card:hover .browser,
-.card:hover .stagebox {
-  transform: translateY(-6px);
 }
 .card-text {
   margin-top: 20px;
@@ -568,13 +602,8 @@ textarea:focus-visible {
   .stage-phone {
     animation: none;
   }
-  .card .browser,
-  .card .stagebox,
-  .btn {
+  .btn,
+  [data-tilt] {
     transition: none;
-  }
-  .card:hover .browser,
-  .card:hover .stagebox {
-    transform: none;
   }
 }

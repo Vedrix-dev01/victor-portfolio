@@ -123,7 +123,7 @@ export default function Home() {
             )}
             {heroPhone && heroPhone.shot?.kind === "phone" && (
               <a href={heroPhone.href} target="_blank" rel="noopener" className="stage-phone">
-                <div className="phone">
+                <div className="phone" data-tilt>
                   <Image
                     src={`/shots/${heroPhone.shot.file}`}
                     alt={`${heroPhone.name} on iPhone`}
