@@ -631,15 +631,12 @@ textarea:focus-visible {
 .chip {
   min-height: 44px;
 }
-.dock {
-  display: none;
-}
 
 @media (max-width: 767px) {
   .wrap {
     padding: 0 20px;
   }
-  /* Section links replace the Fiverr button, which moves to the contact bar. */
+  /* On phones the section links take the place of the quote button. */
   .nav-links {
     display: flex;
     gap: 22px;
@@ -705,34 +702,53 @@ textarea:focus-visible {
     font-size: 16px;
   }
 
-  .dock {
-    position: fixed;
-    inset: auto 0 0 0;
-    z-index: 40;
-    display: flex;
-    gap: 10px;
-    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-    background: rgba(242, 244, 239, 0.94);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid var(--mist);
-    transform: translateY(110%);
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  .dock.dock-on {
-    transform: none;
-  }
-  .dock .btn {
-    flex: 1 1 0;
-    padding: 12px 8px;
-    font-size: 15px;
-    white-space: nowrap;
-  }
-  .foot {
-    padding-bottom: calc(28px + env(safe-area-inset-bottom));
+}
+
+/* hero: what the job covers */
+.hero-sub {
+  margin-top: 26px;
+  max-width: 44rem;
+}
+.jobs {
+  margin-top: 30px;
+  display: grid;
+  gap: 18px 32px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--mist);
+  padding-top: 24px;
+}
+@media (min-width: 900px) {
+  .jobs {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
-@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
-  .dock {
-    transition: none;
+.jobs strong {
+  display: block;
+  font-stretch: 122%;
+  font-weight: 750;
+  font-size: 19px;
+  letter-spacing: -0.02em;
+}
+.jobs span {
+  display: block;
+  margin-top: 4px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--slate);
+}
+.hero-cta {
+  margin-top: 30px;
+}
+@media (max-width: 767px) {
+  .hero-sub {
+    margin-top: 18px;
+  }
+  .jobs {
+    margin-top: 22px;
+    padding-top: 20px;
+    gap: 16px 20px;
+  }
+  .hero-cta {
+    margin-top: 24px;
   }
 }

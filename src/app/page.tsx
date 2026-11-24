@@ -62,6 +62,13 @@ const workItems = live.map((p, i) => ({
   host: host(p.href as string),
 }));
 const other = projects.filter((p) => !p.href);
+
+const jobs = [
+  { title: "Fix", body: "Bugs, failed builds, broken sign-in, payments and database security." },
+  { title: "Launch", body: "Domain, hosting, and App Store and Google Play submission through review." },
+  { title: "Extend", body: "Stripe billing, third-party integrations, AI agents and automation." },
+  { title: "Migrate", body: "Off the app builder and onto hosting and a database you own." },
+];
 const heroWeb =
   workItems.find((p) => p.shot?.kind === "web") ?? workItems.find((p) => p.shot?.kind !== "phone");
 const heroPhone = workItems.find((p) => p.shot?.kind === "phone");
@@ -78,8 +85,8 @@ export default function Home() {
             <a href="#services">Services</a>
             <a href="#contact">Contact</a>
           </div>
-          <a href={FIVERR_URL} target="_blank" rel="noopener" className="btn btn-ink btn-sm nav-cta">
-            Hire me on Fiverr
+          <a href="#contact" className="btn btn-ink btn-sm nav-cta">
+            Get a quote
           </a>
         </div>
       </nav>
@@ -90,20 +97,27 @@ export default function Home() {
             <span className="block">Your app works in preview.</span>
             <span className="block">I get it live.</span>
           </h1>
-          <div className="hero-row">
-            <p className="hero-sub">
-              I&apos;m Victor, a full-stack developer. I take apps built with Lovable, Base44,
-              Replit, Bolt, Emergent and Cursor, fix what breaks, and ship them to the web, the
-              App Store and Google Play.
-            </p>
-            <div className="hero-cta">
-              <a href={FIVERR_URL} target="_blank" rel="noopener" className="btn btn-ink">
-                Hire me on Fiverr
-              </a>
-              <a href={WHATSAPP_URL} target="_blank" rel="noopener" className="btn btn-line">
-                Chat on WhatsApp
-              </a>
-            </div>
+          <p className="hero-sub">
+            I&apos;m Victor, a full-stack developer. Founders bring me apps they built with
+            Lovable, Base44, Replit, Bolt, Emergent or Cursor that are stuck before launch. I fix
+            what is broken, connect what is missing, and publish them to the web, the App Store
+            and Google Play.
+          </p>
+          <ul className="jobs">
+            {jobs.map((j) => (
+              <li key={j.title}>
+                <strong>{j.title}</strong>
+                <span>{j.body}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="hero-cta">
+            <a href="#work" className="btn btn-ink">
+              See shipped work
+            </a>
+            <a href="#contact" className="btn btn-line">
+              Get a quote
+            </a>
           </div>
         </div>
 
@@ -207,15 +221,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <div className="dock" aria-label="Contact">
-        <a href={WHATSAPP_URL} target="_blank" rel="noopener" className="btn btn-line">
-          Chat on WhatsApp
-        </a>
-        <a href={FIVERR_URL} target="_blank" rel="noopener" className="btn btn-ink">
-          Hire me on Fiverr
-        </a>
-      </div>
 
       <footer className="foot">
         <div className="wrap">© 2026 victor</div>
