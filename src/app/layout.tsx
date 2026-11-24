@@ -5,11 +5,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "victor, full-stack and AI app developer",
   description:
-    "Full-stack and AI app developer. From vibe-coded prototype to production: App Store submissions, EU-compliant migrations, Stripe billing, and multi-agent automation.",
+    "Full-stack developer. Web apps, mobile apps and websites built from scratch, and AI-built apps fixed and launched: App Store submissions, Stripe billing, migrations and AI automation.",
   openGraph: {
     title: "victor, full-stack and AI app developer",
     description:
-      "I ship web & mobile apps that actually launch. App Store, EU/GDPR migrations, AI agents & automation.",
+      "I build web apps, mobile apps and websites, and get them live. App Store, Stripe billing, migrations, AI agents and automation.",
     type: "website",
   },
 };
