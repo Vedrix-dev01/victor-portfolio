@@ -17,7 +17,7 @@ type Props = {
 export function Frame({ name, host, shot, tint, priority, sizes }: Props) {
   if (shot?.kind === "phone") {
     return (
-      <div className={`stagebox tint-${tint % 4}`}>
+      <div className={`stagebox tint-${tint % 4}`} data-tilt>
         <div className="phone">
           <Image
             src={`/shots/${shot.file}`}
@@ -35,7 +35,7 @@ export function Frame({ name, host, shot, tint, priority, sizes }: Props) {
     );
   }
   return (
-    <div className="browser">
+    <div className="browser" data-tilt>
       <div className="browser-bar">
         <span className="browser-url">
           <i className="dot" aria-hidden="true" />
