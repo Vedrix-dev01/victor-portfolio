@@ -64,10 +64,10 @@ const workItems = live.map((p, i) => ({
 const other = projects.filter((p) => !p.href);
 
 const jobs = [
-  { title: "Fix", body: "Bugs, failed builds, broken sign-in, payments and database security." },
-  { title: "Launch", body: "Domain, hosting, and App Store and Google Play submission through review." },
-  { title: "Extend", body: "Stripe billing, third-party integrations, AI agents and automation." },
-  { title: "Migrate", body: "Off the app builder and onto hosting and a database you own." },
+  { title: "Build", body: "Web apps, mobile apps and websites from scratch, front end and backend." },
+  { title: "Fix and finish", body: "Take over AI-built or half-done apps: bugs, sign-in, payments, database security." },
+  { title: "Launch", body: "Domain, hosting you own, and App Store and Google Play submission through review." },
+  { title: "AI agents", body: "Client support, lead intake, booking and payment follow-up agents, connected to the tools you already use." },
 ];
 const heroWeb =
   workItems.find((p) => p.shot?.kind === "web") ?? workItems.find((p) => p.shot?.kind !== "phone");
@@ -94,14 +94,14 @@ export default function Home() {
       <header id="top" className="hero">
         <div className="wrap">
           <h1 className="display">
-            <span className="block">Your app works in preview.</span>
-            <span className="block">I get it live.</span>
+            <span className="block">I build apps, websites and AI agents,</span>
+            <span className="block">and I get them live.</span>
           </h1>
           <p className="hero-sub">
-            I&apos;m Victor, a full-stack developer. Founders bring me apps they built with
-            Lovable, Base44, Replit, Bolt, Emergent or Cursor that are stuck before launch. I fix
-            what is broken, connect what is missing, and publish them to the web, the App Store
-            and Google Play.
+            I&apos;m Victor, a full-stack developer. I build web apps, mobile apps and websites
+            from scratch, and AI agents that handle client support, lead intake and payment
+            follow-up. I also take over apps started in Lovable, Base44, Replit, Bolt, Emergent
+            or Cursor, fix them, and take them through launch.
           </p>
           <ul className="jobs">
             {jobs.map((j) => (

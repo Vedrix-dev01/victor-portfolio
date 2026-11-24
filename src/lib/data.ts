@@ -2,8 +2,8 @@ export const services = [
   {
     num: "01",
     title: "Build & fix",
-    body: "Broken Lovable, Bolt, Base44 or Replit build? I debug, refactor, and get it deploying again — or build it right from scratch.",
-    tags: ["Lovable", "Bolt", "Base44", "Supabase"],
+    body: "Web apps, mobile apps and websites built from scratch, with the backend, sign-in and payments included. Or bring a broken Lovable, Bolt, Base44 or Replit build and I debug it, refactor it and get it deploying again.",
+    tags: ["Next.js", "React", "Supabase", "Lovable", "Base44"],
   },
   {
     num: "02",
