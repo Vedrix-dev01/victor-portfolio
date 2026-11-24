@@ -38,5 +38,9 @@
   "madnetic-live": {
     "file": "madnetic-live.jpg",
     "kind": "web"
+  },
+  "rant-passport": {
+    "file": "rant-passport.jpg",
+    "kind": "web"
   }
 }
