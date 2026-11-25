@@ -937,10 +937,23 @@ header[id] {
 .hero-cta {
   animation-delay: 0.18s;
 }
-.stage-web,
+/* The hero screenshot is the largest thing on screen, so it is painted at once
+   and only slides; it never waits invisible. */
+.stage-web {
+  animation: slide-in 0.55s var(--glide) both;
+  animation-delay: 0s;
+}
 .stage-phone {
   animation: rise 0.55s var(--glide) both;
   animation-delay: 0.22s;
+}
+@keyframes slide-in {
+  from {
+    transform: translateY(22px);
+  }
+  to {
+    transform: none;
+  }
 }
 .stage-phone {
   animation-delay: 0.3s;
@@ -1005,6 +1018,9 @@ header[id] {
 .touch-motion [data-tilt],
 .touch-motion [data-tilt].tilting {
   transition: scale 0.28s var(--spring), box-shadow 0.2s;
+}
+/* Only frames near the screen get their own compositor layer. */
+.touch-motion [data-tilt].near {
   will-change: transform;
 }
 .touch-motion [data-tilt] img {
@@ -1080,4 +1096,31 @@ button,
 .nav-links a {
   -webkit-user-select: none;
   user-select: none;
+}
+
+/* ---- Rendering cost ------------------------------------------------------ */
+/* Cards far from the screen are skipped by the browser until they come near.
+   The padding and matching negative margin leave room for shadows and tilt. */
+.card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 580px;
+  padding: 20px;
+  margin: -20px;
+}
+@media (min-width: 820px) {
+  .card {
+    contain-intrinsic-size: auto 620px;
+  }
+}
+.more,
+.svc,
+.contact-grid {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+/* A blurred bar is costly to repaint while scrolling on phones. */
+.touch-motion .nav {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: rgba(242, 244, 239, 0.98);
 }
