@@ -4,7 +4,7 @@ import path from "path";
 import ContactForm from "./components/ContactForm";
 import { Frame, type Shot } from "./components/Frame";
 import { Effects, WorkList } from "./components/Effects";
-import { services, projects, FIVERR_URL, GITHUB_URL, EMAIL } from "@/lib/data";
+import { services, projects, FIVERR_URL, EMAIL } from "@/lib/data";
 
 const MAILTO =
   `mailto:${EMAIL}?subject=New%20project%20inquiry&body=Hi%20Victor%2C%0A%0AI%27d%20like%20to%20work%20with%20you%20on%3A%0A%0A-%20Project%3A%20%0A-%20Platform%2Fstack%3A%20%0A-%20Where%20it%27s%20stuck%3A%20%0A-%20Timeline%2Fbudget%3A%20%0A%0AThanks%2C%0A`;
@@ -212,9 +212,6 @@ export default function Home() {
               </a>
               <a href={FIVERR_URL} target="_blank" rel="noopener" className="way">
                 Fiverr<span>View my gigs</span>
-              </a>
-              <a href={GITHUB_URL} target="_blank" rel="noopener" className="way">
-                GitHub<span>Vedrixappsheet</span>
               </a>
             </div>
           </div>
