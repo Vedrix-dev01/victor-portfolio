@@ -42,9 +42,10 @@ export function Effects() {
     window.addEventListener("resize", onScroll);
     // 3D tilt: frames lean toward the pointer and a soft highlight follows it.
     // Mouse only, and off when the visitor prefers reduced motion.
-    const canTilt =
-      window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
-      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Any real mouse drives the tilt, including on laptops with a touch screen.
+    const canTilt = !calm;
     let active: HTMLElement | null = null;
     const stage = document.querySelector<HTMLElement>(".stage");
     const reset = (el: HTMLElement) => {
@@ -83,7 +84,7 @@ export function Effects() {
     // Depth comes from scrolling. Every value eases toward its target each
     // frame, so motion glides and settles instead of tracking the finger 1:1.
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const touchMotion = !canTilt && !reduced;
+    const touchMotion = !fine && !reduced;
     const clamp = (n: number) => Math.max(-1, Math.min(1, n));
     type Ease = { rx: number; ry: number; iy: number };
     const eased = new WeakMap<HTMLElement, Ease>();
@@ -226,15 +227,19 @@ export function Effects() {
     // Set up after the page has finished becoming interactive, so it never
     // delays the first tap.
     const start = () => {
-      document.documentElement.classList.add("touch-motion");
-      watchAll();
-      const work = document.querySelector(".work");
-      if (work) grown.observe(work, { childList: true });
-      window.addEventListener("scroll", onTouchScroll, { passive: true });
-      window.addEventListener("resize", kick);
-      document.addEventListener("pointerdown", onPress, { passive: true });
-      document.addEventListener("pointerup", release, { passive: true });
-      document.addEventListener("pointercancel", release, { passive: true });
+      if (touchMotion) {
+        document.documentElement.classList.add("touch-motion");
+        watchAll();
+        const work = document.querySelector(".work");
+        if (work) grown.observe(work, { childList: true });
+        window.addEventListener("scroll", onTouchScroll, { passive: true });
+        window.addEventListener("resize", kick);
+        document.addEventListener("pointerdown", onPress, { passive: true });
+        document.addEventListener("pointerup", release, { passive: true });
+        document.addEventListener("pointercancel", release, { passive: true });
+      } else {
+        document.documentElement.classList.add("mouse-motion");
+      }
       const vh = window.innerHeight;
       const below: HTMLElement[] = [];
       // Near the top of the page, only content that starts below the screen animates.
@@ -254,7 +259,7 @@ export function Effects() {
       });
     };
     let idle = 0;
-    if (touchMotion) {
+    if (!reduced) {
       const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number })
         .requestIdleCallback;
       if (ric) idle = ric(start, { timeout: 700 });
