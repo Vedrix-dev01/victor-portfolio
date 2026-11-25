@@ -93,10 +93,12 @@ export default function Home() {
 
       <header id="top" className="hero">
         <div className="wrap">
-          <h1 className="display">
-            I build and ship
-            <br /> apps, websites
-            <br /> and AI agents.
+          <h1 className="display" aria-label="I build and ship apps, websites and AI agents.">
+            {["I build and ship", "apps, websites", "and AI agents."].map((line, i) => (
+              <span className="ln" key={line} aria-hidden="true">
+                <span style={{ "--i": i } as React.CSSProperties}>{line}</span>
+              </span>
+            ))}
           </h1>
           <p className="hero-sub">
             I&apos;m Victor, a full-stack developer. I build web apps, mobile apps, websites and
