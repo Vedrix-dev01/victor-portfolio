@@ -884,26 +884,6 @@ header[id] {
     color: inherit;
   }
 }
-/* Scroll-driven lean on touch screens follows the finger with no lag. */
-.scroll-tilt [data-tilt],
-.scroll-tilt [data-tilt].tilting {
-  transition: scale 0.15s, transform 0.14s linear, box-shadow 0.3s;
-  will-change: transform;
-}
-/* Rise into place on first view (touch screens). */
-.rv {
-  opacity: 0;
-  transform: translateY(22px);
-}
-.rv.rv-in {
-  opacity: 1;
-  transform: none;
-  transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.scroll-tilt .stage-phone {
-  transition: none;
-  translate: 0 calc(var(--py) * -18px);
-}
 @media (prefers-reduced-motion: reduce) {
   .btn:active,
   .chip:active,
@@ -924,5 +904,149 @@ header[id] {
   .hero h1 {
     font-size: clamp(46px, 5.6vw, 84px);
     line-height: 1;
+  }
+}
+
+/* ---- Motion: one entrance, then quiet, eased responses ------------------ */
+:root {
+  --glide: cubic-bezier(0.16, 1, 0.3, 1);
+  --spring: cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+
+/* Entrance: the headline rises line by line, then the rest follows. */
+.hero h1 .ln {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+.hero h1 .ln > span {
+  display: block;
+  transform: translateY(112%);
+  animation: line-up 1s var(--glide) forwards;
+  animation-delay: calc(var(--i) * 90ms + 60ms);
+}
+.hero-sub,
+.hero-cta {
+  opacity: 0;
+  animation: settle 0.9s var(--glide) forwards;
+}
+.hero-sub {
+  animation-delay: 0.38s;
+}
+.hero-cta {
+  animation-delay: 0.48s;
+}
+.stage-web,
+.stage-phone {
+  animation: rise 1.1s var(--glide) both;
+  animation-delay: 0.56s;
+}
+.stage-phone {
+  animation-delay: 0.7s;
+}
+@keyframes line-up {
+  to {
+    transform: none;
+  }
+}
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Presses: quick in, a soft spring out. */
+.btn,
+.chip {
+  transition: scale 0.45s var(--spring), background 0.2s, color 0.2s, border-color 0.2s;
+}
+.btn:active,
+.chip:active {
+  scale: 0.955;
+  transition-duration: 0.08s, 0.2s, 0.2s, 0.2s;
+}
+.card .browser,
+.card .stagebox {
+  transition: scale 0.5s var(--spring), box-shadow 0.3s;
+}
+.card:active .browser,
+.card:active .stagebox {
+  scale: 0.98;
+  transition-duration: 0.1s, 0.3s;
+}
+
+/* The project grid replays a short entrance when the filter changes. */
+.work {
+  animation: settle 0.55s var(--glide);
+}
+
+/* Touch screens: scripted, eased depth. No CSS transition on the lean itself. */
+.touch-motion [data-tilt],
+.touch-motion [data-tilt].tilting {
+  transition: scale 0.5s var(--spring), box-shadow 0.3s;
+  will-change: transform;
+}
+.touch-motion [data-tilt] img {
+  transform: translate3d(0, calc(var(--ip, 0) * -2.2%), 0) scale(1.05);
+}
+.touch-motion .stage-phone {
+  transition: none;
+  translate: 0 calc(var(--py) * -22px);
+}
+.touch-motion .nav {
+  transition: transform 0.5s var(--glide);
+}
+.touch-motion .nav.nav-away {
+  transform: translateY(-101%);
+}
+
+/* First-view reveals on touch screens. */
+.rv {
+  opacity: 0;
+  transform: translateY(26px);
+}
+.rv.rv-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.8s var(--glide) var(--beat, 0ms), transform 0.9s var(--glide) var(--beat, 0ms);
+}
+.card.rv .card-text > * {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.card.rv-in .card-text > * {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.7s var(--glide), transform 0.8s var(--glide);
+}
+.card.rv-in .card-text > :nth-child(1) {
+  transition-delay: 0.16s;
+}
+.card.rv-in .card-text > :nth-child(2) {
+  transition-delay: 0.23s;
+}
+.card.rv-in .card-text > :nth-child(3) {
+  transition-delay: 0.3s;
+}
+.card.rv-in .card-text > :nth-child(4) {
+  transition-delay: 0.37s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero h1 .ln > span,
+  .hero-sub,
+  .hero-cta,
+  .stage-web,
+  .stage-phone,
+  .work {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }

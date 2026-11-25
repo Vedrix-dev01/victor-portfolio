@@ -60,73 +60,133 @@ export function Effects() {
     };
     if (canTilt) document.addEventListener("pointermove", onMove, { passive: true });
 
-    // Touch screens get depth from scrolling instead: each frame leans a few
-    // degrees as it enters and leaves the screen, and sits flat at the centre.
+    // ---- Touch screens --------------------------------------------------
+    // Depth comes from scrolling. Every value eases toward its target each
+    // frame, so motion glides and settles instead of tracking the finger 1:1.
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const scrollTilt = !canTilt && !reduced;
-    let frame = 0;
-    const lean = () => {
-      frame = 0;
+    const touchMotion = !canTilt && !reduced;
+    const clamp = (n: number) => Math.max(-1, Math.min(1, n));
+    type Ease = { rx: number; ry: number; iy: number };
+    const eased = new WeakMap<HTMLElement, Ease>();
+    let held: HTMLElement | null = null;
+    let heldRy = 0;
+    let stagePy = 0;
+    let loop = 0;
+
+    const tick = () => {
+      loop = 0;
       const vh = window.innerHeight;
-      const pos = (r: DOMRect) =>
-        Math.max(-1, Math.min(1, (r.top + r.height / 2 - vh / 2) / (vh / 2)));
+      let moving = false;
       document.querySelectorAll<HTMLElement>("[data-tilt]").forEach((el) => {
         const r = el.getBoundingClientRect();
-        if (r.bottom < -80 || r.top > vh + 80) return;
-        el.style.setProperty("--rx", `${(pos(r) * 9).toFixed(2)}deg`);
+        if (r.bottom < -160 || r.top > vh + 160) return;
+        const p = clamp((r.top + r.height / 2 - vh / 2) / (vh / 2));
+        // Lean a little as it passes; the screenshot inside drifts the other way.
+        const target = { rx: p * 5, ry: el === held ? heldRy : 0, iy: p };
+        const now = eased.get(el) ?? { rx: target.rx, ry: 0, iy: target.iy };
+        now.rx += (target.rx - now.rx) * 0.14;
+        now.ry += (target.ry - now.ry) * 0.18;
+        now.iy += (target.iy - now.iy) * 0.14;
+        if (
+          Math.abs(target.rx - now.rx) > 0.02 ||
+          Math.abs(target.ry - now.ry) > 0.02 ||
+          Math.abs(target.iy - now.iy) > 0.004
+        ) {
+          moving = true;
+        }
+        eased.set(el, now);
+        el.style.setProperty("--rx", `${now.rx.toFixed(2)}deg`);
+        el.style.setProperty("--ry", `${now.ry.toFixed(2)}deg`);
+        el.style.setProperty("--ip", now.iy.toFixed(3));
       });
-      if (stage) stage.style.setProperty("--py", pos(stage.getBoundingClientRect()).toFixed(3));
+      if (stage) {
+        const r = stage.getBoundingClientRect();
+        const target = clamp((r.top + r.height / 2 - vh / 2) / (vh / 2));
+        stagePy += (target - stagePy) * 0.12;
+        if (Math.abs(target - stagePy) > 0.002) moving = true;
+        stage.style.setProperty("--py", stagePy.toFixed(3));
+      }
+      if (moving) loop = requestAnimationFrame(tick);
     };
-    const onScrollTilt = () => {
-      if (!frame) frame = requestAnimationFrame(lean);
+    const kick = () => {
+      if (!loop) loop = requestAnimationFrame(tick);
     };
-    // Touch: a frame leans toward the finger while it is held, with a highlight
-    // under the touch point, and settles back when the finger lifts or scrolls.
-    let held: HTMLElement | null = null;
-    const release = () => {
-      if (!held) return;
-      held.classList.remove("tilting");
-      held.style.setProperty("--ry", "0deg");
-      held = null;
+
+    // The top bar slides away while reading down and returns on the way up.
+    const nav = document.querySelector<HTMLElement>(".nav");
+    let lastY = window.scrollY;
+    const onTouchScroll = () => {
+      kick();
+      const y = window.scrollY;
+      if (nav) {
+        if (y > lastY + 6 && y > 140) nav.classList.add("nav-away");
+        else if (y < lastY - 6 || y < 80) nav.classList.remove("nav-away");
+      }
+      lastY = y;
     };
+
+    // A held frame turns toward the finger with a highlight under it, then
+    // eases back. Buttons and chips give a light tap where the phone allows.
     const onPress = (e: PointerEvent) => {
       if (e.pointerType === "mouse") return;
-      const el = (e.target as Element | null)?.closest<HTMLElement>("[data-tilt]") ?? null;
+      const t = e.target as Element | null;
+      if (t?.closest(".btn, .chip")) {
+        try {
+          navigator.vibrate?.(8);
+        } catch {
+          /* not supported */
+        }
+      }
+      const el = t?.closest<HTMLElement>("[data-tilt]") ?? null;
       if (!el) return;
       const r = el.getBoundingClientRect();
       const x = (e.clientX - r.left) / r.width;
       const y = (e.clientY - r.top) / r.height;
       held = el;
+      heldRy = (x - 0.5) * 10;
       el.classList.add("tilting");
-      el.style.setProperty("--ry", `${((x - 0.5) * 12).toFixed(2)}deg`);
       el.style.setProperty("--gx", `${x * 100}%`);
       el.style.setProperty("--gy", `${y * 100}%`);
+      kick();
+    };
+    const release = () => {
+      if (!held) return;
+      held.classList.remove("tilting");
+      held = null;
+      kick();
     };
 
-    // Touch: content rises into place the first time it scrolls into view.
+    // Content settles into place the first time it is seen. Items that arrive
+    // together follow one another by a beat.
     const reveal = new IntersectionObserver(
       (entries) => {
+        let beat = 0;
         entries.forEach((e) => {
           if (!e.isIntersecting) return;
-          e.target.classList.add("rv-in");
-          reveal.unobserve(e.target);
+          const el = e.target as HTMLElement;
+          el.style.setProperty("--beat", `${beat * 70}ms`);
+          beat += 1;
+          el.classList.add("rv-in");
+          reveal.unobserve(el);
         });
       },
-      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
+      { threshold: 0.1, rootMargin: "0px 0px -7% 0px" }
     );
 
-    if (scrollTilt) {
-      document.documentElement.classList.add("scroll-tilt");
-      lean();
-      window.addEventListener("scroll", onScrollTilt, { passive: true });
-      window.addEventListener("resize", onScrollTilt);
+    if (touchMotion) {
+      document.documentElement.classList.add("touch-motion");
+      kick();
+      window.addEventListener("scroll", onTouchScroll, { passive: true });
+      window.addEventListener("resize", kick);
       document.addEventListener("pointerdown", onPress, { passive: true });
       document.addEventListener("pointerup", release, { passive: true });
       document.addEventListener("pointercancel", release, { passive: true });
       document
-        .querySelectorAll<HTMLElement>(".card, .jobs li, .svc-item, .more-item, .sec h2, .way")
+        .querySelectorAll<HTMLElement>(
+          ".card, .jobs li, .svc-item, .more-item, .sec h2, .sec-lede, .more-h, .way, .stage-note"
+        )
         .forEach((el) => {
-          // Anything already on screen stays put; only content below the fold animates.
+          // Anything already on screen stays put; only content further down animates.
           if (el.getBoundingClientRect().top < window.innerHeight) return;
           el.classList.add("rv");
           reveal.observe(el);
@@ -137,13 +197,13 @@ export function Effects() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       document.removeEventListener("pointermove", onMove);
+      window.removeEventListener("scroll", onTouchScroll);
+      window.removeEventListener("resize", kick);
       document.removeEventListener("pointerdown", onPress);
       document.removeEventListener("pointerup", release);
       document.removeEventListener("pointercancel", release);
       reveal.disconnect();
-      window.removeEventListener("scroll", onScrollTilt);
-      window.removeEventListener("resize", onScrollTilt);
-      if (frame) cancelAnimationFrame(frame);
+      if (loop) cancelAnimationFrame(loop);
     };
   }, []);
 
@@ -185,7 +245,8 @@ export function WorkList({ items }: { items: WorkItem[] }) {
           );
         })}
       </div>
-      <div className="work">
+      {/* Keyed by filter so the grid replays its entrance when the filter changes. */}
+      <div className="work" key={filter}>
         {shown.map((p) => (
           <a key={p.name} href={p.href} target="_blank" rel="noopener" className="card">
             <Frame name={p.name} host={p.host} shot={p.shot} tint={p.tint} />
