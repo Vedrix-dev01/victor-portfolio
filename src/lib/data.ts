@@ -169,5 +169,4 @@ export const projects = [
 ];
 
 export const FIVERR_URL = "https://www.fiverr.com/s/yvKaYX0";
-export const GITHUB_URL = "https://github.com/Vedrixappsheet";
 export const EMAIL = "victorv3925@gmail.com";
