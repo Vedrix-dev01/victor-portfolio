@@ -84,9 +84,9 @@ export function Effects() {
         // Lean a little as it passes; the screenshot inside drifts the other way.
         const target = { rx: p * 5, ry: el === held ? heldRy : 0, iy: p };
         const now = eased.get(el) ?? { rx: target.rx, ry: 0, iy: target.iy };
-        now.rx += (target.rx - now.rx) * 0.14;
-        now.ry += (target.ry - now.ry) * 0.18;
-        now.iy += (target.iy - now.iy) * 0.14;
+        now.rx += (target.rx - now.rx) * 0.3;
+        now.ry += (target.ry - now.ry) * 0.34;
+        now.iy += (target.iy - now.iy) * 0.3;
         if (
           Math.abs(target.rx - now.rx) > 0.02 ||
           Math.abs(target.ry - now.ry) > 0.02 ||
@@ -102,7 +102,7 @@ export function Effects() {
       if (stage) {
         const r = stage.getBoundingClientRect();
         const target = clamp((r.top + r.height / 2 - vh / 2) / (vh / 2));
-        stagePy += (target - stagePy) * 0.12;
+        stagePy += (target - stagePy) * 0.28;
         if (Math.abs(target - stagePy) > 0.002) moving = true;
         stage.style.setProperty("--py", stagePy.toFixed(3));
       }
@@ -164,13 +164,13 @@ export function Effects() {
         entries.forEach((e) => {
           if (!e.isIntersecting) return;
           const el = e.target as HTMLElement;
-          el.style.setProperty("--beat", `${beat * 70}ms`);
+          el.style.setProperty("--beat", `${beat * 35}ms`);
           beat += 1;
           el.classList.add("rv-in");
           reveal.unobserve(el);
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -7% 0px" }
+      { threshold: 0.02, rootMargin: "0px 0px 4% 0px" }
     );
 
     if (touchMotion) {
