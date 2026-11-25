@@ -23,7 +23,7 @@ export function Frame({ name, host, shot, tint, priority, sizes }: Props) {
             src={`/shots/${shot.file}`}
             alt={`${name} on iPhone`}
             fill
-            sizes="240px"
+            sizes="(max-width: 767px) 132px, 200px"
             priority={priority}
           />
         </div>

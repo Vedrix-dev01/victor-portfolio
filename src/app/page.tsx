@@ -136,7 +136,7 @@ export default function Home() {
                     src={`/shots/${heroPhone.shot.file}`}
                     alt={`${heroPhone.name} on iPhone`}
                     fill
-                    sizes="260px"
+                    sizes="(max-width: 767px) 90px, 250px"
                     priority
                   />
                 </div>

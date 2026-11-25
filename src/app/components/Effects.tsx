@@ -19,6 +19,25 @@ export function Effects() {
       links.forEach((a) => a.classList.toggle("on", a.getAttribute("href") === current));
     };
     onScroll();
+    // Section links: sections further down are sized by estimate until they are
+    // drawn, so after the scroll ends, land exactly on the target if it moved.
+    const onJump = (e: MouseEvent) => {
+      const a = (e.target as Element | null)?.closest<HTMLAnchorElement>('a[href^="#"]');
+      const id = a?.getAttribute("href");
+      const target = id && id.length > 1 ? document.querySelector<HTMLElement>(id) : null;
+      if (!target) return;
+      let tries = 0;
+      const settle = () => {
+        const off = target.getBoundingClientRect().top - 72;
+        if (Math.abs(off) > 10 && tries < 3) {
+          tries += 1;
+          window.scrollBy({ top: off, behavior: tries > 1 ? "auto" : "smooth" });
+          window.addEventListener("scrollend", settle, { once: true });
+        }
+      };
+      window.addEventListener("scrollend", settle, { once: true });
+    };
+    document.addEventListener("click", onJump);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     // 3D tilt: frames lean toward the pointer and a soft highlight follows it.
@@ -73,20 +92,49 @@ export function Effects() {
     let stagePy = 0;
     let loop = 0;
 
+    // Only frames near the screen are tracked, so off-screen cards cost nothing.
+    const near = new Set<HTMLElement>();
+    const watch = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          const el = e.target as HTMLElement;
+          if (e.isIntersecting) near.add(el);
+          else near.delete(el);
+          el.classList.toggle("near", e.isIntersecting);
+        });
+        kick();
+      },
+      { rootMargin: "25% 0px 25% 0px" }
+    );
+    const watchAll = () =>
+      document.querySelectorAll<HTMLElement>("[data-tilt]").forEach((el) => watch.observe(el));
+    // Cards that appear when the filter changes are picked up here.
+    const grown = new MutationObserver(watchAll);
+
     const tick = () => {
       loop = 0;
       const vh = window.innerHeight;
       let moving = false;
-      document.querySelectorAll<HTMLElement>("[data-tilt]").forEach((el) => {
+      // Read every position first, then write, so the browser lays out once per frame.
+      const reads: [HTMLElement, number][] = [];
+      near.forEach((el) => {
         const r = el.getBoundingClientRect();
-        if (r.bottom < -160 || r.top > vh + 160) return;
-        const p = clamp((r.top + r.height / 2 - vh / 2) / (vh / 2));
+        reads.push([el, clamp((r.top + r.height / 2 - vh / 2) / (vh / 2))]);
+      });
+      let stageP: number | null = null;
+      if (stage) {
+        const r = stage.getBoundingClientRect();
+        if (r.bottom > -200 && r.top < vh + 200) {
+          stageP = clamp((r.top + r.height / 2 - vh / 2) / (vh / 2));
+        }
+      }
+      reads.forEach(([el, p]) => {
         // Lean a little as it passes; the screenshot inside drifts the other way.
         const target = { rx: p * 5, ry: el === held ? heldRy : 0, iy: p };
         const now = eased.get(el) ?? { rx: target.rx, ry: 0, iy: target.iy };
-        now.rx += (target.rx - now.rx) * 0.14;
-        now.ry += (target.ry - now.ry) * 0.18;
-        now.iy += (target.iy - now.iy) * 0.14;
+        now.rx += (target.rx - now.rx) * 0.3;
+        now.ry += (target.ry - now.ry) * 0.34;
+        now.iy += (target.iy - now.iy) * 0.3;
         if (
           Math.abs(target.rx - now.rx) > 0.02 ||
           Math.abs(target.ry - now.ry) > 0.02 ||
@@ -99,11 +147,9 @@ export function Effects() {
         el.style.setProperty("--ry", `${now.ry.toFixed(2)}deg`);
         el.style.setProperty("--ip", now.iy.toFixed(3));
       });
-      if (stage) {
-        const r = stage.getBoundingClientRect();
-        const target = clamp((r.top + r.height / 2 - vh / 2) / (vh / 2));
-        stagePy += (target - stagePy) * 0.12;
-        if (Math.abs(target - stagePy) > 0.002) moving = true;
+      if (stage && stageP !== null) {
+        stagePy += (stageP - stagePy) * 0.28;
+        if (Math.abs(stageP - stagePy) > 0.002) moving = true;
         stage.style.setProperty("--py", stagePy.toFixed(3));
       }
       if (moving) loop = requestAnimationFrame(tick);
@@ -164,45 +210,73 @@ export function Effects() {
         entries.forEach((e) => {
           if (!e.isIntersecting) return;
           const el = e.target as HTMLElement;
-          el.style.setProperty("--beat", `${beat * 70}ms`);
+          el.style.setProperty("--beat", `${beat * 35}ms`);
           beat += 1;
           el.classList.add("rv-in");
           reveal.unobserve(el);
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -7% 0px" }
+      { threshold: 0, rootMargin: "0px 0px 12% 0px" }
     );
 
-    if (touchMotion) {
+    // iOS only shows pressed states when a touch listener exists.
+    const noop = () => {};
+    document.addEventListener("touchstart", noop, { passive: true });
+
+    // Set up after the page has finished becoming interactive, so it never
+    // delays the first tap.
+    const start = () => {
       document.documentElement.classList.add("touch-motion");
-      kick();
+      watchAll();
+      const work = document.querySelector(".work");
+      if (work) grown.observe(work, { childList: true });
       window.addEventListener("scroll", onTouchScroll, { passive: true });
       window.addEventListener("resize", kick);
       document.addEventListener("pointerdown", onPress, { passive: true });
       document.addEventListener("pointerup", release, { passive: true });
       document.addEventListener("pointercancel", release, { passive: true });
+      const vh = window.innerHeight;
+      const below: HTMLElement[] = [];
+      // Near the top of the page, only content that starts below the screen animates.
       document
-        .querySelectorAll<HTMLElement>(
-          ".card, .jobs li, .svc-item, .more-item, .sec h2, .sec-lede, .more-h, .way, .stage-note"
-        )
+        .querySelectorAll<HTMLElement>(".card, .jobs li, .sec h2, .sec-lede, .more-h, .stage-note")
         .forEach((el) => {
-          // Anything already on screen stays put; only content further down animates.
-          if (el.getBoundingClientRect().top < window.innerHeight) return;
-          el.classList.add("rv");
-          reveal.observe(el);
+          if (el.getBoundingClientRect().top >= vh) below.push(el);
         });
+      // These sit far down the page in sections the browser has not laid out yet,
+      // so they are marked without measuring them.
+      document
+        .querySelectorAll<HTMLElement>(".svc-item, .more-item, .way")
+        .forEach((el) => below.push(el));
+      below.forEach((el) => {
+        el.classList.add("rv");
+        reveal.observe(el);
+      });
+    };
+    let idle = 0;
+    if (touchMotion) {
+      const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number })
+        .requestIdleCallback;
+      if (ric) idle = ric(start, { timeout: 700 });
+      else idle = window.setTimeout(start, 200);
     }
 
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       document.removeEventListener("pointermove", onMove);
+      document.removeEventListener("click", onJump);
+      document.removeEventListener("touchstart", noop);
       window.removeEventListener("scroll", onTouchScroll);
       window.removeEventListener("resize", kick);
       document.removeEventListener("pointerdown", onPress);
       document.removeEventListener("pointerup", release);
       document.removeEventListener("pointercancel", release);
       reveal.disconnect();
+      watch.disconnect();
+      grown.disconnect();
+      const cic = (window as unknown as { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback;
+      if (idle && cic) cic(idle);
       if (loop) cancelAnimationFrame(loop);
     };
   }, []);
@@ -224,6 +298,7 @@ export type WorkItem = {
 
 export function WorkList({ items }: { items: WorkItem[] }) {
   const [filter, setFilter] = useState("All");
+  const [swap, setSwap] = useState(0);
   const groups = ["All", ...Array.from(new Set(items.map((i) => i.group)))];
   const shown = filter === "All" ? items : items.filter((i) => i.group === filter);
 
@@ -238,15 +313,20 @@ export function WorkList({ items }: { items: WorkItem[] }) {
               type="button"
               className={filter === g ? "chip chip-on" : "chip"}
               aria-pressed={filter === g}
-              onClick={() => setFilter(g)}
+              onClick={() => {
+                if (g === filter) return;
+                setFilter(g);
+                setSwap((n) => n + 1);
+              }}
             >
               {g} <span>{count}</span>
             </button>
           );
         })}
       </div>
-      {/* Keyed by filter so the grid replays its entrance when the filter changes. */}
-      <div className="work" key={filter}>
+      {/* The class alternates on each filter change, which replays the entrance
+          without rebuilding the cards, so images do not reload. */}
+      <div className={`work work-${swap % 2}`}>
         {shown.map((p) => (
           <a key={p.name} href={p.href} target="_blank" rel="noopener" className="card">
             <Frame name={p.name} host={p.host} shot={p.shot} tint={p.tint} />
