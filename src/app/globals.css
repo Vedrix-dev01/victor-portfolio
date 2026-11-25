@@ -982,8 +982,23 @@ header[id] {
 }
 
 /* The project grid replays a short entrance when the filter changes. */
-.work {
-  animation: settle 0.3s var(--glide);
+.work-0 {
+  animation: settle-a 0.28s var(--glide);
+}
+.work-1 {
+  animation: settle-b 0.28s var(--glide);
+}
+@keyframes settle-a {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+@keyframes settle-b {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 }
 
 /* Touch screens: scripted, eased depth. No CSS transition on the lean itself. */
@@ -1044,9 +1059,25 @@ header[id] {
   .hero-cta,
   .stage-web,
   .stage-phone,
-  .work {
+  .work-0,
+  .work-1 {
     animation: none;
     opacity: 1;
     transform: none;
   }
+}
+
+/* Taps act at once: no double-tap wait, no text selection on controls. */
+a,
+button,
+.btn,
+.chip,
+.card {
+  touch-action: manipulation;
+}
+.btn,
+.chip,
+.nav-links a {
+  -webkit-user-select: none;
+  user-select: none;
 }

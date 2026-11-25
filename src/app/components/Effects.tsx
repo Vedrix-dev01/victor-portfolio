@@ -170,8 +170,12 @@ export function Effects() {
           reveal.unobserve(el);
         });
       },
-      { threshold: 0.02, rootMargin: "0px 0px 4% 0px" }
+      { threshold: 0, rootMargin: "0px 0px 12% 0px" }
     );
+
+    // iOS only shows pressed states when a touch listener exists.
+    const noop = () => {};
+    document.addEventListener("touchstart", noop, { passive: true });
 
     if (touchMotion) {
       document.documentElement.classList.add("touch-motion");
@@ -197,6 +201,7 @@ export function Effects() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       document.removeEventListener("pointermove", onMove);
+      document.removeEventListener("touchstart", noop);
       window.removeEventListener("scroll", onTouchScroll);
       window.removeEventListener("resize", kick);
       document.removeEventListener("pointerdown", onPress);
@@ -224,6 +229,7 @@ export type WorkItem = {
 
 export function WorkList({ items }: { items: WorkItem[] }) {
   const [filter, setFilter] = useState("All");
+  const [swap, setSwap] = useState(0);
   const groups = ["All", ...Array.from(new Set(items.map((i) => i.group)))];
   const shown = filter === "All" ? items : items.filter((i) => i.group === filter);
 
@@ -238,15 +244,20 @@ export function WorkList({ items }: { items: WorkItem[] }) {
               type="button"
               className={filter === g ? "chip chip-on" : "chip"}
               aria-pressed={filter === g}
-              onClick={() => setFilter(g)}
+              onClick={() => {
+                if (g === filter) return;
+                setFilter(g);
+                setSwap((n) => n + 1);
+              }}
             >
               {g} <span>{count}</span>
             </button>
           );
         })}
       </div>
-      {/* Keyed by filter so the grid replays its entrance when the filter changes. */}
-      <div className="work" key={filter}>
+      {/* The class alternates on each filter change, which replays the entrance
+          without rebuilding the cards, so images do not reload. */}
+      <div className={`work work-${swap % 2}`}>
         {shown.map((p) => (
           <a key={p.name} href={p.href} target="_blank" rel="noopener" className="card">
             <Frame name={p.name} host={p.host} shot={p.shot} tint={p.tint} />
