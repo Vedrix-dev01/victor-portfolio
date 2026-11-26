@@ -1186,3 +1186,210 @@ button,
     scale: none;
   }
 }
+
+/* ---- Project story ------------------------------------------------------- */
+/* A card opens in place: its screenshot grows into the story panel. */
+html:has(dialog.story[open]) {
+  overflow: hidden;
+}
+.story {
+  width: min(1120px, calc(100vw - 48px));
+  max-width: none;
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 20px;
+  background: var(--paper);
+  color: var(--ink);
+  overflow: auto;
+  overscroll-behavior: contain;
+  box-shadow: 0 40px 90px -30px rgba(15, 31, 24, 0.6);
+}
+.story::backdrop {
+  background: rgba(14, 42, 32, 0.62);
+}
+.story[open] {
+  animation: story-in 0.32s var(--glide);
+}
+.story[open]::backdrop {
+  animation: story-dim 0.3s ease-out;
+}
+@keyframes story-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+}
+@keyframes story-dim {
+  from {
+    opacity: 0;
+  }
+}
+.story-in {
+  padding: 18px 28px 32px;
+}
+.story-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.story-count {
+  font-size: 14px;
+  color: var(--slate);
+  font-variant-numeric: tabular-nums;
+}
+.story-nav {
+  display: flex;
+  gap: 8px;
+}
+.story-btn {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1.5px solid var(--mist);
+  background: var(--white);
+  color: var(--ink);
+  transition: scale 0.26s var(--spring), border-color 0.15s, background 0.15s, color 0.15s;
+  touch-action: manipulation;
+}
+.story-btn:active {
+  scale: 0.92;
+}
+.story-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.story-grid {
+  display: grid;
+  gap: 28px;
+  align-items: center;
+}
+.story-shot .stagebox {
+  max-width: 420px;
+  margin-inline: auto;
+}
+.story-text {
+  animation: story-text 0.38s var(--glide) 0.06s both;
+}
+@keyframes story-text {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+.story-kind {
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--live);
+}
+.story-name {
+  margin-top: 4px;
+  font-stretch: 122%;
+  font-weight: 800;
+  font-size: clamp(28px, 3.4vw, 44px);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.story-desc {
+  margin-top: 14px;
+  font-size: 17px;
+  color: var(--slate);
+  max-width: 52ch;
+}
+.story-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+.story-stack li {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--mist);
+  background: var(--white);
+  font-size: 14px;
+  font-weight: 550;
+}
+.story-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 26px;
+}
+@media (min-width: 900px) {
+  .story-in {
+    padding: 22px 36px 40px;
+  }
+  .story-grid {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 44px;
+  }
+}
+@media (max-width: 767px) {
+  /* On phones the story is a sheet that rises from the bottom edge. */
+  .story {
+    width: 100vw;
+    max-height: 92dvh;
+    margin: auto 0 0;
+    border-radius: 20px 20px 0 0;
+  }
+  .story[open] {
+    animation: story-up 0.34s var(--glide);
+  }
+  .story-in {
+    padding: 14px 18px calc(24px + env(safe-area-inset-bottom));
+  }
+  .story-bar {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    margin: -14px -18px 14px;
+    padding: 12px 18px;
+    background: var(--paper);
+  }
+  .story-shot .stagebox {
+    max-width: 260px;
+  }
+  .story-cta .btn {
+    flex: 1 1 100%;
+  }
+}
+@keyframes story-up {
+  from {
+    transform: translateY(40%);
+    opacity: 0.4;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .story-btn:hover {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+  }
+}
+/* The screenshot that travels between the card and the story. */
+::view-transition-group(shot) {
+  animation-duration: 0.42s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.22s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .story[open],
+  .story[open]::backdrop,
+  .story-text {
+    animation: none;
+  }
+}

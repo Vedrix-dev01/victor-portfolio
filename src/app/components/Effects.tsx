@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { Frame, type Shot } from "./Frame";
 
 export function Effects() {
@@ -301,11 +302,59 @@ export type WorkItem = {
   tint: number;
 };
 
+type Doc = Document & { startViewTransition?: (cb: () => void) => { finished: Promise<void> } };
+
 export function WorkList({ items }: { items: WorkItem[] }) {
   const [filter, setFilter] = useState("All");
   const [swap, setSwap] = useState(0);
+  // The project whose story is open, and the card its screenshot grows from.
+  const [open, setOpen] = useState<string | null>(null);
+  const [origin, setOrigin] = useState<string | null>(null);
+  const dialog = useRef<HTMLDialogElement>(null);
   const groups = ["All", ...Array.from(new Set(items.map((i) => i.group)))];
   const shown = filter === "All" ? items : items.filter((i) => i.group === filter);
+  const at = shown.findIndex((p) => p.name === open);
+  const story = at >= 0 ? shown[at] : null;
+
+  // The screenshot travels between the card and the story where the browser
+  // supports it; elsewhere the story simply fades in.
+  const morph = (change: () => void) => {
+    const doc = document as Doc;
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (doc.startViewTransition && !calm) doc.startViewTransition(() => flushSync(change));
+    else change();
+  };
+  const show = (name: string) => {
+    flushSync(() => setOrigin(name));
+    morph(() => {
+      setOpen(name);
+      if (dialog.current && !dialog.current.open) dialog.current.showModal();
+    });
+  };
+  const close = useCallback(() => {
+    morph(() => {
+      setOpen(null);
+      dialog.current?.close();
+    });
+  }, []);
+  const step = useCallback(
+    (by: number) => {
+      if (at < 0) return;
+      const next = shown[(at + by + shown.length) % shown.length].name;
+      setOrigin(next);
+      setOpen(next);
+    },
+    [at, shown]
+  );
+  useEffect(() => {
+    if (!story) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") step(1);
+      if (e.key === "ArrowLeft") step(-1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [story, step]);
 
   return (
     <>
@@ -333,8 +382,25 @@ export function WorkList({ items }: { items: WorkItem[] }) {
           without rebuilding the cards, so images do not reload. */}
       <div className={`work work-${swap % 2}`}>
         {shown.map((p) => (
-          <a key={p.name} href={p.href} target="_blank" rel="noopener" className="card">
-            <Frame name={p.name} host={p.host} shot={p.shot} tint={p.tint} />
+          <a
+            key={p.name}
+            href={p.href}
+            target="_blank"
+            rel="noopener"
+            className="card"
+            onClick={(e) => {
+              // New-tab clicks still go straight to the live site.
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+              e.preventDefault();
+              show(p.name);
+            }}
+          >
+            <div
+              className="card-shot"
+              style={!open && origin === p.name ? { viewTransitionName: "shot" } : undefined}
+            >
+              <Frame name={p.name} host={p.host} shot={p.shot} tint={p.tint} />
+            </div>
             <div className="card-text">
               <div className="card-top">
                 <h3 className="card-name">{p.name}</h3>
@@ -342,11 +408,74 @@ export function WorkList({ items }: { items: WorkItem[] }) {
               </div>
               <p className="card-desc">{p.desc}</p>
               <p className="card-stack">{p.stack}</p>
-              <span className="card-open">Open {p.host}</span>
+              <span className="card-open">View project</span>
             </div>
           </a>
         ))}
       </div>
+      <dialog
+        ref={dialog}
+        className="story"
+        aria-label={story ? story.name : "Project"}
+        onCancel={(e) => {
+          e.preventDefault();
+          close();
+        }}
+        onClick={(e) => {
+          if (e.target === dialog.current) close();
+        }}
+      >
+        {story && (
+          <div className="story-in">
+            <div className="story-bar">
+              <span className="story-count">
+                {at + 1} of {shown.length}
+              </span>
+              <div className="story-nav">
+                <button type="button" className="story-btn" onClick={() => step(-1)} aria-label="Previous project">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+                </button>
+                <button type="button" className="story-btn" onClick={() => step(1)} aria-label="Next project">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+                </button>
+                <button type="button" className="story-btn" onClick={close} aria-label="Close project">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                </button>
+              </div>
+            </div>
+            <div className="story-grid">
+              <div className="story-shot" style={{ viewTransitionName: "shot" }}>
+                <Frame
+                  key={story.name}
+                  name={story.name}
+                  host={story.host}
+                  shot={story.shot}
+                  tint={story.tint}
+                  sizes="(min-width: 900px) 640px, 100vw"
+                />
+              </div>
+              <div className="story-text" key={story.name}>
+                <p className="story-kind">{story.kind}</p>
+                <h3 className="story-name">{story.name}</h3>
+                <p className="story-desc">{story.desc}</p>
+                <ul className="story-stack" aria-label="Built with">
+                  {story.stack.split(", ").map((t) => (
+                    <li key={t}>{t}</li>
+                  ))}
+                </ul>
+                <div className="story-cta">
+                  <a href={story.href} target="_blank" rel="noopener" className="btn btn-ink">
+                    Open {story.host}
+                  </a>
+                  <a href="#contact" className="btn btn-line" onClick={close}>
+                    Build one like this
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </dialog>
     </>
   );
 }
